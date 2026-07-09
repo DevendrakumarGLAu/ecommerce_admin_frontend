@@ -1,0 +1,49 @@
+@use '../../../styles/variables' as v;
+
+.auth-layout {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: v.$space-5;
+  background: radial-gradient(
+    circle at top left,
+    color-mix(in srgb, var(--mat-sys-primary) 12%, transparent),
+    transparent 60%
+  ),
+  var(--mat-sys-surface);
+}
+
+.auth-layout__panel {
+  width: 100%;
+  max-width: 420px;
+  background: var(--mat-sys-surface-container-low);
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: v.$radius-lg;
+  box-shadow: v.$shadow-lg;
+  padding: v.$space-6;
+}
+
+.auth-layout__brand {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: v.$space-5;
+}
+
+.auth-layout__brand-mark {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: var(--mat-sys-primary);
+  color: var(--mat-sys-on-primary);
+  font-weight: 700;
+}
+
+.auth-layout__brand-name {
+  font-weight: 600;
+  font-size: 1.1rem;
+}

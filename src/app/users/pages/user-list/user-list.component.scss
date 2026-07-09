@@ -1,0 +1,12 @@
+@use '../../../../styles/variables' as v;
+
+.user-filters {
+  display: flex;
+  align-items: center;
+  gap: v.$space-3;
+  flex-wrap: wrap;
+}
+
+.user-filters__field {
+  width: 160px;
+}

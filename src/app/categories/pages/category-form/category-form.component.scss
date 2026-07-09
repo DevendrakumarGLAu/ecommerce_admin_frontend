@@ -1,0 +1,21 @@
+@use '../../../../styles/variables' as v;
+@use '../../../../styles/mixins' as m;
+
+.category-form {
+  @include m.card-surface;
+  max-width: 760px;
+}
+
+.category-form__section {
+  display: flex;
+  flex-direction: column;
+  gap: v.$space-2;
+  padding: v.$space-5;
+}
+
+.category-form__label {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--mat-sys-on-surface-variant);
+  margin: 0.5rem 0 0.25rem;
+}

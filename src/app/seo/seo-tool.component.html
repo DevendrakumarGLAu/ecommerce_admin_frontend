@@ -1,0 +1,36 @@
+<div class="page-container">
+  <app-page-toolbar title="SEO preview tool" subtitle="Test how a title, description, and URL will look in search and social." />
+
+  <div class="seo-tool">
+    <form [formGroup]="form" class="seo-tool__form" novalidate>
+      <mat-form-field appearance="outline" class="u-full-width">
+        <mat-label>Title</mat-label>
+        <input matInput formControlName="title" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="u-full-width">
+        <mat-label>Description</mat-label>
+        <textarea matInput rows="3" formControlName="description"></textarea>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="u-full-width">
+        <mat-label>URL</mat-label>
+        <input matInput formControlName="url" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="u-full-width">
+        <mat-label>Social image URL</mat-label>
+        <input matInput formControlName="image" placeholder="https://…" />
+      </mat-form-field>
+    </form>
+
+    <div class="seo-tool__preview">
+      <app-seo-preview
+        [title]="previewTitle()"
+        [description]="previewDescription()"
+        [url]="previewUrl()"
+        [image]="previewImage()"
+      />
+    </div>
+  </div>
+</div>

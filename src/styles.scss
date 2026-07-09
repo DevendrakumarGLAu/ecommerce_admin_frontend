@@ -1,0 +1,187 @@
+// Global styles entry point.
+@use '@angular/material' as mat;
+@use 'styles/theme';
+@use 'styles/variables' as v;
+@use 'styles/mixins' as m;
+
+@include mat.core();
+
+// ---------------------------------------------------------------------------
+// Base reset (layered on top of Bootstrap's reboot, which ships via angular.json)
+// ---------------------------------------------------------------------------
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background: var(--mat-sys-surface);
+  color: var(--mat-sys-on-surface);
+  font-family: var(--mat-sys-body-medium-font, inherit);
+  -webkit-font-smoothing: antialiased;
+  transition: background-color v.$transition-base, color v.$transition-base;
+}
+
+a {
+  color: var(--mat-sys-primary);
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Scoped AdminLTE/Bootstrap overrides so the layout shell (topbar/sidebar/
+// footer) matches the Material color tokens instead of Bootstrap's own
+// hard-coded palette. Everything inside <router-outlet> uses Angular Material
+// components directly and never touches Bootstrap classes.
+// ---------------------------------------------------------------------------
+.app-wrapper {
+  background: var(--mat-sys-surface);
+}
+
+.app-header {
+  background: var(--mat-sys-surface-container) !important;
+  border-bottom-color: var(--mat-sys-outline-variant) !important;
+}
+
+.app-sidebar {
+  background: var(--mat-sys-surface-container-low) !important;
+  border-right: 1px solid var(--mat-sys-outline-variant);
+}
+
+.app-footer {
+  background: var(--mat-sys-surface-container) !important;
+  border-top: 1px solid var(--mat-sys-outline-variant);
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.sidebar-menu .nav-link.active {
+  background: var(--mat-sys-secondary-container) !important;
+  color: var(--mat-sys-on-secondary-container) !important;
+  border-radius: v.$radius-sm;
+}
+
+// ---------------------------------------------------------------------------
+// Small utility classes used across hand-written components.
+// ---------------------------------------------------------------------------
+.u-flex-center {
+  @include m.flex-center;
+}
+
+.u-flex-between {
+  @include m.flex-between;
+}
+
+.u-truncate {
+  @include m.truncate;
+}
+
+.u-scroll {
+  @include m.custom-scrollbar;
+}
+
+// Status chip used by products (list + detail) and, going forward, any other
+// entity with a draft/published/archived-style status. Global so it doesn't
+// get duplicated across every component that needs it.
+.chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.15rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  text-transform: capitalize;
+  background: var(--mat-sys-surface-container-high);
+  color: var(--mat-sys-on-surface-variant);
+
+  &--published,
+  &--in_stock {
+    background: color-mix(in srgb, #2e7d32 15%, transparent);
+    color: #2e7d32;
+  }
+
+  &--draft,
+  &--preorder {
+    background: color-mix(in srgb, #ed6c02 15%, transparent);
+    color: #ed6c02;
+  }
+
+  &--archived,
+  &--out_of_stock {
+    background: color-mix(in srgb, var(--mat-sys-error) 15%, transparent);
+    color: var(--mat-sys-error);
+  }
+}
+
+.u-full-width {
+  width: 100%;
+}
+
+.u-muted {
+  color: var(--mat-sys-on-surface-variant);
+}
+
+// Page-level wrapper used by every feature page for consistent gutters.
+.page-container {
+  display: flex;
+  flex-direction: column;
+  gap: v.$space-5;
+  padding: v.$space-5;
+  max-width: 1600px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+// Quill editor should inherit Material surface colors instead of its default
+// white background, so it looks native in dark mode.
+.ql-toolbar.ql-snow,
+.ql-container.ql-snow {
+  border-color: var(--mat-sys-outline-variant) !important;
+}
+
+.ql-container.ql-snow {
+  background: var(--mat-sys-surface-container-lowest);
+  color: var(--mat-sys-on-surface);
+  min-height: 220px;
+}
+
+.ql-editor.ql-blank::before {
+  color: var(--mat-sys-on-surface-variant);
+}
+
+// Angular CDK overlay containers (dialogs/menus) render outside the app root,
+// so they need the theme's typography applied explicitly.
+.cdk-overlay-container {
+  font-family: var(--mat-sys-body-medium-font, inherit);
+}
+
+// Toast notification colors (NotificationService panelClass).
+.snackbar-success {
+  --mdc-snackbar-container-color: #2e7d32;
+  --mdc-snackbar-supporting-text-color: #fff;
+  --mat-snack-bar-button-color: #fff;
+}
+
+.snackbar-error {
+  --mdc-snackbar-container-color: var(--mat-sys-error);
+  --mdc-snackbar-supporting-text-color: var(--mat-sys-on-error);
+  --mat-snack-bar-button-color: var(--mat-sys-on-error);
+}
+
+.snackbar-warning {
+  --mdc-snackbar-container-color: #ed6c02;
+  --mdc-snackbar-supporting-text-color: #fff;
+  --mat-snack-bar-button-color: #fff;
+}
+
+.snackbar-info {
+  --mdc-snackbar-container-color: var(--mat-sys-inverse-surface);
+  --mdc-snackbar-supporting-text-color: var(--mat-sys-inverse-on-surface);
+  --mat-snack-bar-button-color: var(--mat-sys-inverse-on-surface);
+}

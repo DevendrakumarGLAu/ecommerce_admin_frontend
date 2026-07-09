@@ -1,0 +1,109 @@
+<div class="page-container">
+  <app-page-toolbar title="Dashboard" subtitle="An overview of your catalog and store activity.">
+    <div toolbarActions class="dashboard-quick-actions">
+      <button mat-stroked-button type="button" routerLink="/categories/new">
+        <mat-icon>add</mat-icon>
+        New category
+      </button>
+      <button mat-flat-button color="primary" type="button" routerLink="/products/new">
+        <mat-icon>add</mat-icon>
+        New product
+      </button>
+    </div>
+  </app-page-toolbar>
+
+  @if (loadFailed()) {
+    <app-error-state
+      title="Couldn't load dashboard"
+      description="We ran into a problem fetching your store's stats."
+      (retry)="loadStats()"
+    />
+  } @else {
+    <div class="dashboard-stats">
+      <app-stat-card
+        label="Total products"
+        icon="inventory_2"
+        iconBackground="#f97316"
+        [value]="stats()?.total_products ?? 0"
+        [loading]="loading()"
+        link="/products"
+      />
+      <app-stat-card
+        label="Total categories"
+        icon="category"
+        iconBackground="#8b5cf6"
+        [value]="stats()?.total_categories ?? 0"
+        [loading]="loading()"
+        link="/categories"
+      />
+      <app-stat-card
+        label="Total users"
+        icon="group"
+        iconBackground="#0ea5e9"
+        [value]="stats()?.total_users ?? 0"
+        [loading]="loading()"
+        link="/users"
+      />
+      <app-stat-card
+        label="Featured products"
+        icon="star"
+        iconBackground="#e11d48"
+        [value]="stats()?.featured_products?.length ?? 0"
+        [loading]="loading()"
+        link="/products?featured=true"
+      />
+    </div>
+
+    <div class="dashboard-grid">
+      <section class="dashboard-panel">
+        <h2>Products by category</h2>
+        @if (chartLoading()) {
+          <p class="u-muted">Loading chart…</p>
+        } @else if (!chartData().length) {
+          <app-empty-state icon="bar_chart" title="No category data yet" />
+        } @else {
+          <app-bar-chart [data]="chartData()" ariaLabel="Products by category" />
+        }
+      </section>
+
+      <section class="dashboard-panel">
+        <h2>Recent activity</h2>
+        @if (!stats()?.recent_products?.length) {
+          <app-empty-state icon="history" title="No recent activity" />
+        } @else {
+          <ul class="activity-list">
+            @for (product of stats()?.recent_products; track product.id) {
+              <li>
+                <mat-icon>inventory_2</mat-icon>
+                <div>
+                  <a [routerLink]="['/products', product.slug]">{{ product.title }}</a>
+                  <span class="u-muted">added on {{ product.created_at | date: 'mediumDate' }}</span>
+                </div>
+              </li>
+            }
+          </ul>
+        }
+      </section>
+    </div>
+
+    <section class="dashboard-panel">
+      <h2>Latest products</h2>
+      @if (!stats()?.recent_products?.length) {
+        <app-empty-state icon="inventory_2" title="No products yet" actionLabel="Add your first product" />
+      } @else {
+        <div class="latest-products">
+          @for (product of stats()?.recent_products; track product.id) {
+            <a class="latest-product-card" [routerLink]="['/products', product.slug]">
+              <img [src]="product.og_image ?? 'assets/placeholder-product.svg'" alt="" />
+              <div class="latest-product-card__body">
+                <span class="u-truncate">{{ product.title }}</span>
+                <span class="u-muted">{{ product.brand ?? 'No brand' }}</span>
+                <span class="latest-product-card__price">₹{{ product.sale_price ?? product.price }}</span>
+              </div>
+            </a>
+          }
+        </div>
+      }
+    </section>
+  }
+</div>

@@ -1,0 +1,23 @@
+@use '../../../../styles/variables' as v;
+@use '../../../../styles/mixins' as m;
+
+.seo-fields__grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: v.$space-6;
+
+  @include m.down(lg) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.seo-fields__inputs {
+  display: flex;
+  flex-direction: column;
+}
+
+.seo-fields__preview {
+  position: sticky;
+  top: v.$space-4;
+  align-self: flex-start;
+}

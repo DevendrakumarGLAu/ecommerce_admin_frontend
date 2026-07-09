@@ -1,0 +1,78 @@
+<input
+  #fileInput
+  type="file"
+  accept="image/*"
+  [multiple]="multiple()"
+  (change)="onFileInputChange($event)"
+  hidden
+/>
+
+@if (!multiple() && images().length) {
+  <div class="image-upload__single-preview" (click)="openFilePicker()">
+    <img [src]="images()[0].url" alt="" />
+    @if (images()[0].isUploading) {
+      <div class="image-upload__progress-overlay">
+        <mat-progress-bar mode="determinate" [value]="images()[0].progress ?? 0" />
+      </div>
+    }
+    <button
+      mat-icon-button
+      type="button"
+      class="image-upload__remove"
+      aria-label="Remove image"
+      (click)="$event.stopPropagation(); removeImage(images()[0])"
+    >
+      <mat-icon>close</mat-icon>
+    </button>
+    <div class="image-upload__replace-hint">
+      <mat-icon>edit</mat-icon>
+      <span>Replace</span>
+    </div>
+  </div>
+} @else {
+  <div
+    class="image-upload__dropzone"
+    [class.image-upload__dropzone--active]="isDragOver()"
+    tabindex="0"
+    role="button"
+    aria-label="Upload image"
+    (click)="openFilePicker()"
+    (keydown.enter)="openFilePicker()"
+    (dragover)="onDragOver($event)"
+    (dragleave)="onDragLeave()"
+    (drop)="onFileDrop($event)"
+  >
+    <mat-icon>cloud_upload</mat-icon>
+    <p>{{ label() }}</p>
+    <span class="image-upload__hint">PNG, JPG, WEBP or GIF up to {{ maxSizeMb() }}MB</span>
+  </div>
+}
+
+@if (multiple() && images().length) {
+  <div
+    class="image-upload__grid"
+    cdkDropList
+    cdkDropListOrientation="horizontal"
+    (cdkDropListDropped)="onReorderDrop($event)"
+  >
+    @for (image of images(); track image.id) {
+      <div class="image-upload__item" cdkDrag>
+        <img [src]="image.url" alt="" />
+        @if (image.isUploading) {
+          <div class="image-upload__progress-overlay">
+            <mat-progress-bar mode="determinate" [value]="image.progress ?? 0" />
+          </div>
+        }
+        <button
+          mat-icon-button
+          type="button"
+          class="image-upload__remove"
+          aria-label="Remove image"
+          (click)="removeImage(image)"
+        >
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+    }
+  </div>
+}

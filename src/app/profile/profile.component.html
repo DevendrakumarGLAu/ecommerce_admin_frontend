@@ -1,0 +1,104 @@
+<div class="page-container">
+  <app-page-toolbar title="Profile" subtitle="Manage your personal information and account security." />
+
+  <div class="profile-grid">
+    <section class="profile-card">
+      <h2>Avatar</h2>
+      <app-image-upload
+        [multiple]="false"
+        folder="profile"
+        label="Upload a profile photo"
+        [images]="avatar()"
+        (imagesChange)="avatar.set($event)"
+      />
+    </section>
+
+    <section class="profile-card">
+      <h2>Account details</h2>
+      <p class="profile-card__email">
+        <mat-icon>mail_outline</mat-icon>
+        {{ user()?.email }}
+        <span class="u-muted">(email cannot be changed here)</span>
+      </p>
+
+      <form [formGroup]="profileForm" (ngSubmit)="saveProfile()" novalidate>
+        <mat-form-field appearance="outline" class="u-full-width">
+          <mat-label>First name</mat-label>
+          <input matInput formControlName="first_name" />
+        </mat-form-field>
+        <app-form-error [control]="profileForm.controls.first_name" label="First name" />
+
+        <mat-form-field appearance="outline" class="u-full-width">
+          <mat-label>Last name</mat-label>
+          <input matInput formControlName="last_name" />
+        </mat-form-field>
+        <app-form-error [control]="profileForm.controls.last_name" label="Last name" />
+
+        <mat-form-field appearance="outline" class="u-full-width">
+          <mat-label>Phone</mat-label>
+          <input matInput formControlName="phone" />
+        </mat-form-field>
+
+        <button mat-flat-button color="primary" type="submit" [disabled]="savingProfile()">
+          @if (savingProfile()) {
+            <mat-progress-spinner mode="indeterminate" diameter="20" />
+          } @else {
+            Save profile
+          }
+        </button>
+      </form>
+    </section>
+
+    <section class="profile-card">
+      <h2>Change password</h2>
+      <form [formGroup]="passwordForm" (ngSubmit)="savePassword()" novalidate>
+        <mat-form-field appearance="outline" class="u-full-width">
+          <mat-label>Current password</mat-label>
+          <input
+            matInput
+            [type]="hideCurrentPassword() ? 'password' : 'text'"
+            formControlName="current_password"
+            autocomplete="current-password"
+          />
+          <button
+            mat-icon-button
+            matSuffix
+            type="button"
+            (click)="hideCurrentPassword.set(!hideCurrentPassword())"
+          >
+            <mat-icon>{{ hideCurrentPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button>
+        </mat-form-field>
+        <app-form-error [control]="passwordForm.controls.current_password" label="Current password" />
+
+        <mat-form-field appearance="outline" class="u-full-width">
+          <mat-label>New password</mat-label>
+          <input
+            matInput
+            [type]="hideNewPassword() ? 'password' : 'text'"
+            formControlName="new_password"
+            autocomplete="new-password"
+          />
+          <button mat-icon-button matSuffix type="button" (click)="hideNewPassword.set(!hideNewPassword())">
+            <mat-icon>{{ hideNewPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button>
+        </mat-form-field>
+        <app-form-error [control]="passwordForm.controls.new_password" label="New password" />
+
+        <mat-form-field appearance="outline" class="u-full-width">
+          <mat-label>Confirm new password</mat-label>
+          <input matInput [type]="hideNewPassword() ? 'password' : 'text'" formControlName="confirm_password" />
+        </mat-form-field>
+        <app-form-error [control]="passwordForm.controls.confirm_password" label="Confirmation" />
+
+        <button mat-flat-button color="primary" type="submit" [disabled]="savingPassword()">
+          @if (savingPassword()) {
+            <mat-progress-spinner mode="indeterminate" diameter="20" />
+          } @else {
+            Change password
+          }
+        </button>
+      </form>
+    </section>
+  </div>
+</div>

@@ -1,0 +1,45 @@
+<div class="page-container">
+  <app-page-toolbar title="User details" [breadcrumbs]="[{ label: 'Users', link: '/users' }, { label: 'Details' }]">
+    @if (user(); as u) {
+      <button
+        toolbarActions
+        mat-flat-button
+        [color]="u.is_active ? 'warn' : 'primary'"
+        type="button"
+        [disabled]="isSelf()"
+        (click)="toggleActive()"
+      >
+        {{ u.is_active ? 'Deactivate' : 'Activate' }}
+      </button>
+    }
+  </app-page-toolbar>
+
+  @if (loading()) {
+    <app-loader label="Loading user…" />
+  } @else if (loadFailed() || !user()) {
+    <app-error-state title="User not found" (retry)="load()" />
+  } @else {
+    @let u = user()!;
+    <div class="user-detail">
+      <div class="user-detail__avatar">{{ u.first_name.charAt(0) }}{{ u.last_name.charAt(0) }}</div>
+      <div class="user-detail__info">
+        <h2>{{ u.first_name }} {{ u.last_name }}</h2>
+        <span class="chip">{{ u.role }}</span>
+        <span class="chip" [class]="u.is_active ? 'chip--published' : 'chip--archived'">
+          {{ u.is_active ? 'Active' : 'Inactive' }}
+        </span>
+
+        <dl class="user-detail__fields">
+          <dt>Email</dt>
+          <dd>{{ u.email }}</dd>
+          <dt>Phone</dt>
+          <dd>{{ u.phone ?? '—' }}</dd>
+          <dt>Joined</dt>
+          <dd>{{ u.created_at | date: 'mediumDate' }}</dd>
+          <dt>Last updated</dt>
+          <dd>{{ u.updated_at | date: 'medium' }}</dd>
+        </dl>
+      </div>
+    </div>
+  }
+</div>

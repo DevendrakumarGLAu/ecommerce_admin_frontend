@@ -1,0 +1,45 @@
+<div class="page-container">
+  <app-page-toolbar title="Categories" subtitle="Organize your product catalog into categories.">
+    <a toolbarActions mat-flat-button color="primary" routerLink="/categories/new">
+      <mat-icon>add</mat-icon>
+      New category
+    </a>
+  </app-page-toolbar>
+
+  <app-search-box placeholder="Search categories…" (search)="onSearch($event)" />
+
+  <app-data-table
+    [columns]="columns"
+    [data]="items()"
+    [total]="total()"
+    [pageIndex]="(pagination().page ?? 1) - 1"
+    [pageSize]="pagination().limit ?? 20"
+    [loading]="loading()"
+    emptyTitle="No categories found"
+    emptyDescription="Create your first category to start organizing products."
+    exportFilename="categories"
+    (sortChange)="onSortChange($event)"
+    (pageChange)="onPageChange($event)"
+    (rowClick)="editCategory($event)"
+  >
+    <ng-template appDataTableCell="image" let-row>
+      <img class="category-thumb" [src]="row.image ?? 'assets/placeholder-product.svg'" alt="" />
+    </ng-template>
+
+    <ng-template appDataTableCell="actions" let-row>
+      <button mat-icon-button type="button" [matMenuTriggerFor]="rowMenu" (click)="$event.stopPropagation()">
+        <mat-icon>more_vert</mat-icon>
+      </button>
+      <mat-menu #rowMenu="matMenu">
+        <button mat-menu-item type="button" (click)="editCategory(row)">
+          <mat-icon>edit</mat-icon>
+          Edit
+        </button>
+        <button mat-menu-item type="button" (click)="deleteCategory(row)">
+          <mat-icon>delete</mat-icon>
+          Delete
+        </button>
+      </mat-menu>
+    </ng-template>
+  </app-data-table>
+</div>

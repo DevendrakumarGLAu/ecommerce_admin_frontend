@@ -1,0 +1,45 @@
+@use '../../../../styles/variables' as v;
+
+:host {
+  display: contents;
+}
+
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: v.$topbar-height;
+  padding: 0 0.75rem;
+  position: relative;
+}
+
+.app-header__progress {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+}
+
+.app-header__start,
+.app-header__end {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.app-header__user-info {
+  display: flex;
+  flex-direction: column;
+  padding: 0.5rem 1rem;
+  min-width: 200px;
+
+  strong {
+    font-size: 0.9rem;
+  }
+
+  span {
+    font-size: 0.75rem;
+    color: var(--mat-sys-on-surface-variant);
+  }
+}

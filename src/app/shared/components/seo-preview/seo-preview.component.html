@@ -1,0 +1,28 @@
+<div class="seo-preview">
+  <div class="seo-preview__block">
+    <span class="seo-preview__label">Google search preview</span>
+    <div class="seo-preview__serp">
+      <span class="seo-preview__serp-url">{{ url() }}</span>
+      <span class="seo-preview__serp-title">{{ title() }}</span>
+      <span class="seo-preview__serp-description">{{ description() }}</span>
+    </div>
+  </div>
+
+  <div class="seo-preview__block">
+    <span class="seo-preview__label">Social preview</span>
+    <div class="seo-preview__card">
+      <div class="seo-preview__card-image">
+        @if (image()) {
+          <img [src]="image()" alt="" />
+        } @else {
+          <span>No image</span>
+        }
+      </div>
+      <div class="seo-preview__card-body">
+        <span class="seo-preview__card-domain">{{ url() }}</span>
+        <span class="seo-preview__card-title">{{ title() }}</span>
+        <span class="seo-preview__card-description">{{ description() }}</span>
+      </div>
+    </div>
+  </div>
+</div>

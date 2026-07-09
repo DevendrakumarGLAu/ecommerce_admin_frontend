@@ -1,0 +1,119 @@
+<div class="page-container">
+  <app-page-toolbar
+    [title]="product()?.title ?? 'Product'"
+    [breadcrumbs]="[{ label: 'Products', link: '/products' }, { label: product()?.title ?? '...' }]"
+  >
+    @if (product(); as product) {
+      <ng-container toolbarActions>
+        <a mat-button [routerLink]="['/products', product.slug, 'edit']">
+          <mat-icon>edit</mat-icon>
+          Edit
+        </a>
+        <button mat-stroked-button color="warn" type="button" (click)="deleteProduct()">
+          <mat-icon>delete</mat-icon>
+          Delete
+        </button>
+      </ng-container>
+    }
+  </app-page-toolbar>
+
+  @if (loading()) {
+    <app-loader label="Loading product…" />
+  } @else if (loadFailed() || !product()) {
+    <app-error-state title="Product not found" description="This product may have been deleted." (retry)="load()" />
+  } @else {
+    @let p = product()!;
+    <div class="product-view">
+      <div class="product-view__gallery">
+        @if (p.images.length) {
+          <img class="product-view__hero" [src]="p.images[activeImageIndex()].image_url" [alt]="p.images[activeImageIndex()].alt_text ?? p.title" />
+          @if (p.images.length > 1) {
+            <div class="product-view__thumbs">
+              @for (image of p.images; track image.id; let i = $index) {
+                <button
+                  type="button"
+                  class="product-view__thumb"
+                  [class.product-view__thumb--active]="i === activeImageIndex()"
+                  (click)="activeImageIndex.set(i)"
+                >
+                  <img [src]="image.image_url" [alt]="image.alt_text ?? ''" />
+                </button>
+              }
+            </div>
+          }
+        } @else {
+          <img class="product-view__hero" src="assets/placeholder-product.svg" alt="" />
+        }
+
+        @if (p.videos.length) {
+          <div class="product-view__videos">
+            @for (video of p.videos; track video.id) {
+              <video [src]="video.video_url" controls [attr.aria-label]="video.caption ?? 'Product video'"></video>
+            }
+          </div>
+        }
+      </div>
+
+      <div class="product-view__details">
+        <div class="product-view__chips">
+          <span class="chip" [class]="'chip--' + p.status">{{ p.status }}</span>
+          <span class="chip" [class]="'chip--' + p.stock_status">{{ p.stock_status }}</span>
+          @if (p.featured) {
+            <span class="chip">Featured</span>
+          }
+          @if (p.bestseller) {
+            <span class="chip">Bestseller</span>
+          }
+          @if (p.new_arrival) {
+            <span class="chip">New arrival</span>
+          }
+        </div>
+
+        <h2>{{ p.title }}</h2>
+        <p class="u-muted">{{ p.category.name }} @if (p.brand) { &middot; {{ p.brand }} }</p>
+
+        <div class="product-view__price">
+          @if (p.sale_price) {
+            <strong>₹{{ p.sale_price }}</strong>
+            <s class="u-muted">₹{{ p.price }}</s>
+          } @else {
+            <strong>₹{{ p.price }}</strong>
+          }
+        </div>
+
+        @if (p.sku) {
+          <p class="u-muted">SKU: {{ p.sku }}</p>
+        }
+
+        @if (p.marketplace_links.length) {
+          <div class="product-view__buy-links">
+            @for (link of p.marketplace_links; track link.id) {
+              <a mat-stroked-button [href]="link.url" target="_blank" rel="noopener">
+                <mat-icon>open_in_new</mat-icon>
+                {{ link.platform === 'other' ? (link.custom_label ?? 'Other') : platformLabels[link.platform] }}
+              </a>
+            }
+          </div>
+        }
+
+        @if (p.short_description) {
+          <p>{{ p.short_description }}</p>
+        }
+
+        @if (p.description) {
+          <div class="product-view__description" [innerHTML]="p.description"></div>
+        }
+      </div>
+    </div>
+
+    <section class="product-view__seo">
+      <h3>SEO</h3>
+      <app-seo-preview
+        [title]="p.seo_title || p.meta_title || p.title"
+        [description]="p.meta_description || p.short_description || ''"
+        [url]="'https://firozabadbangles.com/products/' + p.slug"
+        [image]="p.og_image"
+      />
+    </section>
+  }
+</div>

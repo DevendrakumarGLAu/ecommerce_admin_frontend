@@ -1,0 +1,36 @@
+// Angular Material 3 theming. Dark mode is toggled by ThemeService setting
+// `data-bs-theme="dark"` on <html> — the same attribute Bootstrap 5.3 / AdminLTE
+// use for their own dark-mode CSS variables, so one toggle drives everything.
+@use '@angular/material' as mat;
+
+$brand-typography: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif';
+
+html {
+  color-scheme: light;
+
+  @include mat.theme(
+    (
+      color: (
+        theme-type: light,
+        primary: mat.$orange-palette,
+        tertiary: mat.$rose-palette
+      ),
+      typography: $brand-typography,
+      density: 0
+    )
+  );
+}
+
+html[data-bs-theme='dark'] {
+  color-scheme: dark;
+
+  @include mat.theme(
+    (
+      color: (
+        theme-type: dark,
+        primary: mat.$orange-palette,
+        tertiary: mat.$rose-palette
+      )
+    )
+  );
+}

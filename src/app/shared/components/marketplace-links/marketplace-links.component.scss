@@ -1,0 +1,67 @@
+@use '../../../../styles/variables' as v;
+@use '../../../../styles/mixins' as m;
+
+.marketplace-links {
+  display: flex;
+  flex-direction: column;
+  gap: v.$space-3;
+}
+
+.marketplace-links__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.marketplace-links__item {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: v.$radius-sm;
+  background: var(--mat-sys-surface-container-lowest);
+}
+
+.marketplace-links__badge {
+  flex-shrink: 0;
+  padding: 0.15rem 0.6rem;
+  border-radius: 999px;
+  background: var(--mat-sys-secondary-container);
+  color: var(--mat-sys-on-secondary-container);
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.marketplace-links__url {
+  flex: 1;
+  min-width: 0;
+  font-size: 0.85rem;
+}
+
+.marketplace-links__form {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.marketplace-links__platform {
+  width: 160px;
+}
+
+.marketplace-links__label {
+  width: 180px;
+}
+
+.marketplace-links__link {
+  flex: 1;
+  min-width: 220px;
+}
+
+.marketplace-links__add {
+  height: 56px;
+}

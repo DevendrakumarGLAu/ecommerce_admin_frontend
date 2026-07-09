@@ -1,0 +1,38 @@
+// Shared styles for login/forgot-password/reset-password pages, `@use`d from
+// each page's own component stylesheet to avoid duplicating the same rules.
+@use '../../styles/variables' as v;
+
+.auth-title {
+  margin: 0 0 0.25rem;
+  font: var(--mat-sys-headline-small);
+}
+
+.auth-subtitle {
+  margin: 0 0 v.$space-5;
+  color: var(--mat-sys-on-surface-variant);
+  font-size: 0.9rem;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.auth-form__row {
+  display: flex;
+  justify-content: flex-end;
+  margin: 0.25rem 0 1rem;
+  font-size: 0.85rem;
+}
+
+.auth-form__submit {
+  height: 44px;
+}
+
+.auth-form__footer {
+  margin-top: v.$space-5;
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--mat-sys-on-surface-variant);
+}

@@ -1,0 +1,53 @@
+<nav class="app-header navbar navbar-expand">
+  @if (loadingService.isLoading()) {
+    <mat-progress-bar mode="indeterminate" class="app-header__progress" />
+  }
+
+  <div class="app-header__start">
+    <button
+      mat-icon-button
+      type="button"
+      matTooltip="Toggle sidebar"
+      aria-label="Toggle sidebar"
+      (click)="sidebarService.toggle()"
+    >
+      <mat-icon>menu</mat-icon>
+    </button>
+  </div>
+
+  <div class="app-header__end">
+    <button
+      mat-icon-button
+      type="button"
+      [matTooltip]="themeService.mode() === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'"
+      (click)="themeService.toggle()"
+    >
+      <mat-icon>{{ themeService.mode() === 'dark' ? 'light_mode' : 'dark_mode' }}</mat-icon>
+    </button>
+
+    <button mat-icon-button type="button" [matMenuTriggerFor]="userMenu" aria-label="Account menu">
+      <mat-icon>account_circle</mat-icon>
+    </button>
+
+    <mat-menu #userMenu="matMenu">
+      <div class="app-header__user-info">
+        <strong>{{ authService.currentUser()?.first_name }} {{ authService.currentUser()?.last_name }}</strong>
+        <span>{{ authService.currentUser()?.email }}</span>
+      </div>
+      <mat-divider />
+      <button mat-menu-item type="button" routerLink="/profile">
+        <mat-icon>person</mat-icon>
+        <span>Profile</span>
+      </button>
+      <button mat-menu-item type="button" routerLink="/settings">
+        <mat-icon>settings</mat-icon>
+        <span>Settings</span>
+      </button>
+      <mat-divider />
+      <button mat-menu-item type="button" (click)="logout()">
+        <mat-icon>logout</mat-icon>
+        <span>Logout</span>
+      </button>
+    </mat-menu>
+  </div>
+</nav>

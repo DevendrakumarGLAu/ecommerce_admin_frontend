@@ -1,0 +1,115 @@
+<div class="page-container">
+  <app-page-toolbar title="Products" subtitle="Manage your product catalog.">
+    <a toolbarActions mat-flat-button color="primary" routerLink="/products/new">
+      <mat-icon>add</mat-icon>
+      New product
+    </a>
+  </app-page-toolbar>
+
+  <div class="product-filters">
+    <app-search-box placeholder="Search products…" (search)="onSearch($event)" />
+
+    <mat-form-field appearance="outline" class="product-filters__field">
+      <mat-label>Category</mat-label>
+      <mat-select (selectionChange)="onFilterChange('category_id', $event.value)">
+        <mat-option [value]="null">All categories</mat-option>
+        @for (category of categories(); track category.id) {
+          <mat-option [value]="category.id">{{ category.name }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="product-filters__field">
+      <mat-label>Status</mat-label>
+      <mat-select (selectionChange)="onFilterChange('status', $event.value)">
+        <mat-option [value]="null">All statuses</mat-option>
+        @for (status of statusOptions; track status) {
+          <mat-option [value]="status">{{ status }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="product-filters__field">
+      <mat-label>Stock</mat-label>
+      <mat-select (selectionChange)="onFilterChange('stock_status', $event.value)">
+        <mat-option [value]="null">All stock</mat-option>
+        @for (stock of stockOptions; track stock) {
+          <mat-option [value]="stock">{{ stock }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-chip-listbox aria-label="Quick filters" multiple>
+      <mat-chip-option (selectionChange)="onFilterChange('featured', $event.selected || undefined)">Featured</mat-chip-option>
+      <mat-chip-option (selectionChange)="onFilterChange('bestseller', $event.selected || undefined)">Bestseller</mat-chip-option>
+      <mat-chip-option (selectionChange)="onFilterChange('new_arrival', $event.selected || undefined)">New arrival</mat-chip-option>
+    </mat-chip-listbox>
+  </div>
+
+  <app-data-table
+    [columns]="columns"
+    [data]="items()"
+    [total]="total()"
+    [pageIndex]="(pagination().page ?? 1) - 1"
+    [pageSize]="pagination().limit ?? 20"
+    [loading]="loading()"
+    [selectable]="true"
+    [bulkActions]="bulkActions"
+    emptyTitle="No products found"
+    emptyDescription="Try adjusting your search or filters, or add a new product."
+    exportFilename="products"
+    (sortChange)="onSortChange($event)"
+    (pageChange)="onPageChange($event)"
+    (rowClick)="viewProduct($event)"
+  >
+    <ng-template appDataTableCell="thumbnail" let-row>
+      <img class="product-thumb" [src]="row.og_image ?? 'assets/placeholder-product.svg'" alt="" />
+    </ng-template>
+
+    <ng-template appDataTableCell="stock_status" let-row>
+      <span class="chip" [class]="'chip--' + row.stock_status">{{ row.stock_status }}</span>
+    </ng-template>
+
+    <ng-template appDataTableCell="status" let-row>
+      <span class="chip" [class]="'chip--' + row.status">{{ row.status }}</span>
+    </ng-template>
+
+    <ng-template appDataTableCell="flags" let-row>
+      <div class="flag-icons">
+        @if (row.featured) {
+          <mat-icon matTooltip="Featured" class="flag-icons__featured">star</mat-icon>
+        }
+        @if (row.bestseller) {
+          <mat-icon matTooltip="Bestseller" class="flag-icons__bestseller">local_fire_department</mat-icon>
+        }
+        @if (row.new_arrival) {
+          <mat-icon matTooltip="New arrival" class="flag-icons__new">fiber_new</mat-icon>
+        }
+      </div>
+    </ng-template>
+
+    <ng-template appDataTableCell="actions" let-row>
+      <button mat-icon-button type="button" [matMenuTriggerFor]="rowMenu" (click)="$event.stopPropagation()">
+        <mat-icon>more_vert</mat-icon>
+      </button>
+      <mat-menu #rowMenu="matMenu">
+        <button mat-menu-item type="button" (click)="viewProduct(row)">
+          <mat-icon>visibility</mat-icon>
+          View
+        </button>
+        <button mat-menu-item type="button" (click)="editProduct(row)">
+          <mat-icon>edit</mat-icon>
+          Edit
+        </button>
+        <button mat-menu-item type="button" (click)="duplicateProduct(row)">
+          <mat-icon>content_copy</mat-icon>
+          Duplicate
+        </button>
+        <button mat-menu-item type="button" (click)="deleteProduct(row)">
+          <mat-icon>delete</mat-icon>
+          Delete
+        </button>
+      </mat-menu>
+    </ng-template>
+  </app-data-table>
+</div>

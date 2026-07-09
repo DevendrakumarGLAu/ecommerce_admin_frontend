@@ -1,0 +1,48 @@
+@use '../../../../styles/variables' as v;
+@use '../../../../styles/mixins' as m;
+
+.product-filters {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: v.$space-3;
+}
+
+.product-filters__field {
+  width: 160px;
+
+  ::ng-deep .mat-mdc-text-field-wrapper {
+    height: 44px;
+  }
+}
+
+.product-thumb {
+  width: 40px;
+  height: 40px;
+  border-radius: v.$radius-sm;
+  object-fit: cover;
+  display: block;
+}
+
+.flag-icons {
+  display: flex;
+  gap: 0.25rem;
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+
+  &__featured {
+    color: #eab308;
+  }
+
+  &__bestseller {
+    color: #f97316;
+  }
+
+  &__new {
+    color: #0ea5e9;
+  }
+}

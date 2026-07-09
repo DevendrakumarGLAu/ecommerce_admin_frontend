@@ -1,0 +1,62 @@
+<div [formGroup]="group()" class="seo-fields">
+  <div class="seo-fields__grid">
+    <div class="seo-fields__inputs">
+      <mat-form-field appearance="outline" class="u-full-width">
+        <mat-label>SEO title</mat-label>
+        <input matInput formControlName="seo_title" maxlength="255" />
+      </mat-form-field>
+      <app-form-error [control]="control('seo_title')" label="SEO title" />
+
+      @if (advanced()) {
+        <mat-form-field appearance="outline" class="u-full-width">
+          <mat-label>Meta title</mat-label>
+          <input matInput formControlName="meta_title" maxlength="255" />
+        </mat-form-field>
+        <app-form-error [control]="control('meta_title')" label="Meta title" />
+      }
+
+      <mat-form-field appearance="outline" class="u-full-width">
+        <mat-label>Meta description</mat-label>
+        <textarea matInput rows="3" formControlName="meta_description" maxlength="500"></textarea>
+      </mat-form-field>
+      <app-form-error [control]="control('meta_description')" label="Meta description" />
+
+      <mat-form-field appearance="outline" class="u-full-width">
+        <mat-label>Meta keywords</mat-label>
+        <input matInput formControlName="meta_keywords" placeholder="bangles, gold plated, wedding jewelry" />
+      </mat-form-field>
+      <app-form-error [control]="control('meta_keywords')" label="Meta keywords" />
+
+      @if (advanced()) {
+        <mat-form-field appearance="outline" class="u-full-width">
+          <mat-label>Canonical URL</mat-label>
+          <input matInput formControlName="canonical_url" placeholder="https://…" />
+          <mat-icon matPrefix>link</mat-icon>
+        </mat-form-field>
+        <app-form-error [control]="control('canonical_url')" label="Canonical URL" />
+
+        <mat-form-field appearance="outline" class="u-full-width">
+          <mat-label>Open Graph image URL</mat-label>
+          <input matInput formControlName="og_image" placeholder="https://…" />
+          <mat-icon matPrefix>image</mat-icon>
+        </mat-form-field>
+        <app-form-error [control]="control('og_image')" label="Open Graph image" />
+
+        <mat-form-field appearance="outline" class="u-full-width">
+          <mat-label>Schema JSON (JSON-LD)</mat-label>
+          <textarea matInput rows="5" formControlName="schema_json" placeholder='e.g. {"@type": "Product", "name": "..."}'></textarea>
+        </mat-form-field>
+        <app-form-error [control]="control('schema_json')" label="Schema JSON" />
+      }
+    </div>
+
+    <div class="seo-fields__preview">
+      <app-seo-preview
+        [title]="previewTitle()"
+        [description]="previewDescription()"
+        [url]="previewUrl()"
+        [image]="previewImage()"
+      />
+    </div>
+  </div>
+</div>

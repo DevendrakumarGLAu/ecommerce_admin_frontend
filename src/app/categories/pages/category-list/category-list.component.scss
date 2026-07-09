@@ -1,0 +1,9 @@
+@use '../../../../styles/variables' as v;
+
+.category-thumb {
+  width: 40px;
+  height: 40px;
+  border-radius: v.$radius-sm;
+  object-fit: cover;
+  display: block;
+}

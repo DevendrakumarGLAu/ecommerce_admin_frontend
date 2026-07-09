@@ -1,0 +1,74 @@
+<input
+  #fileInput
+  type="file"
+  accept="video/*"
+  [multiple]="multiple()"
+  (change)="onFileInputChange($event)"
+  hidden
+/>
+
+@if (!multiple() && videos().length) {
+  <div class="video-upload__single-preview">
+    <video [src]="videos()[0].url" controls muted></video>
+    @if (videos()[0].isUploading) {
+      <div class="video-upload__progress-overlay">
+        <mat-progress-bar mode="determinate" [value]="videos()[0].progress ?? 0" />
+      </div>
+    }
+    <button
+      mat-icon-button
+      type="button"
+      class="video-upload__remove"
+      aria-label="Remove video"
+      (click)="removeVideo(videos()[0])"
+    >
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+} @else {
+  <div
+    class="video-upload__dropzone"
+    [class.video-upload__dropzone--active]="isDragOver()"
+    tabindex="0"
+    role="button"
+    aria-label="Upload video"
+    (click)="openFilePicker()"
+    (keydown.enter)="openFilePicker()"
+    (dragover)="onDragOver($event)"
+    (dragleave)="onDragLeave()"
+    (drop)="onFileDrop($event)"
+  >
+    <mat-icon>videocam</mat-icon>
+    <p>{{ label() }}</p>
+    <span class="video-upload__hint">MP4, WEBM or MOV up to {{ maxSizeMb() }}MB</span>
+  </div>
+}
+
+@if (multiple() && videos().length) {
+  <div
+    class="video-upload__grid"
+    cdkDropList
+    cdkDropListOrientation="horizontal"
+    (cdkDropListDropped)="onReorderDrop($event)"
+  >
+    @for (video of videos(); track video.id) {
+      <div class="video-upload__item" cdkDrag>
+        <video [src]="video.url" controls muted></video>
+        @if (video.isUploading) {
+          <div class="video-upload__progress-overlay">
+            <mat-progress-bar mode="determinate" [value]="video.progress ?? 0" />
+          </div>
+        }
+        <button
+          mat-icon-button
+          type="button"
+          class="video-upload__remove"
+          aria-label="Remove video"
+          (click)="removeVideo(video)"
+        >
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+    }
+  </div>
+}

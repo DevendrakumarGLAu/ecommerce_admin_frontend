@@ -1,0 +1,53 @@
+<div class="page-container">
+  <app-page-toolbar
+    [title]="isEditMode() ? 'Edit category' : 'New category'"
+    [breadcrumbs]="[{ label: 'Categories', link: '/categories' }, { label: isEditMode() ? 'Edit' : 'New' }]"
+  >
+    <a toolbarActions mat-button routerLink="/categories">Cancel</a>
+    <button toolbarActions mat-flat-button color="primary" type="button" [disabled]="submitting()" (click)="submit()">
+      @if (submitting()) {
+        <mat-progress-spinner mode="indeterminate" diameter="20" />
+      } @else {
+        Save category
+      }
+    </button>
+  </app-page-toolbar>
+
+  @if (loading()) {
+    <p class="u-muted">Loading category…</p>
+  } @else {
+    <form [formGroup]="form" class="category-form" novalidate>
+      <mat-tab-group>
+        <mat-tab label="General">
+          <div class="category-form__section">
+            <mat-form-field appearance="outline" class="u-full-width">
+              <mat-label>Name</mat-label>
+              <input matInput formControlName="name" maxlength="150" />
+            </mat-form-field>
+            <app-form-error [control]="form.controls.name" label="Name" />
+
+            <mat-form-field appearance="outline" class="u-full-width">
+              <mat-label>Description</mat-label>
+              <textarea matInput rows="4" formControlName="description"></textarea>
+            </mat-form-field>
+
+            <label class="category-form__label">Category image</label>
+            <app-image-upload
+              [multiple]="false"
+              folder="categories"
+              label="Drag & drop a category image, or click to browse"
+              [images]="image()"
+              (imagesChange)="image.set($event)"
+            />
+          </div>
+        </mat-tab>
+
+        <mat-tab label="SEO">
+          <div class="category-form__section">
+            <app-seo-form-fields [group]="form" [advanced]="false" previewUrlBase="https://firozabadbangles.com/categories" />
+          </div>
+        </mat-tab>
+      </mat-tab-group>
+    </form>
+  }
+</div>

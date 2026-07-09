@@ -1,0 +1,49 @@
+@use '../../../../styles/variables' as v;
+@use '../../../../styles/mixins' as m;
+
+.user-detail {
+  display: flex;
+  gap: v.$space-5;
+  @include m.card-surface;
+  padding: v.$space-6;
+}
+
+.user-detail__avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: var(--mat-sys-primary);
+  color: var(--mat-sys-on-primary);
+  font-size: 1.5rem;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.user-detail__info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  h2 {
+    margin: 0;
+  }
+}
+
+.user-detail__fields {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: 0.5rem 1rem;
+  margin: v.$space-4 0 0;
+
+  dt {
+    color: var(--mat-sys-on-surface-variant);
+    font-size: 0.85rem;
+  }
+
+  dd {
+    margin: 0;
+  }
+}

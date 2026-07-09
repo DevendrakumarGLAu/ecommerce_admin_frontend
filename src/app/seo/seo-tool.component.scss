@@ -1,0 +1,19 @@
+@use '../../styles/variables' as v;
+@use '../../styles/mixins' as m;
+
+.seo-tool {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: v.$space-6;
+
+  @include m.down(lg) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.seo-tool__form {
+  @include m.card-surface;
+  padding: v.$space-5;
+  display: flex;
+  flex-direction: column;
+}

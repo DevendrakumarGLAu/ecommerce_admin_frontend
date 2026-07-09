@@ -1,0 +1,109 @@
+@use '../../../../styles/variables' as v;
+@use '../../../../styles/mixins' as m;
+
+.product-view {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: v.$space-6;
+
+  @include m.down(lg) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.product-view__hero {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: v.$radius-md;
+  border: 1px solid var(--mat-sys-outline-variant);
+}
+
+.product-view__videos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+
+  video {
+    width: 100%;
+    max-width: 320px;
+    aspect-ratio: 16 / 9;
+    border-radius: v.$radius-md;
+    border: 1px solid var(--mat-sys-outline-variant);
+  }
+}
+
+.product-view__thumbs {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.product-view__thumb {
+  width: 56px;
+  height: 56px;
+  border-radius: v.$radius-sm;
+  overflow: hidden;
+  padding: 0;
+  border: 2px solid transparent;
+  cursor: pointer;
+  background: none;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  &--active {
+    border-color: var(--mat-sys-primary);
+  }
+}
+
+.product-view__details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  h2 {
+    margin: 0;
+  }
+}
+
+.product-view__chips {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.product-view__buy-links {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin: 0.25rem 0;
+}
+
+.product-view__price {
+  display: flex;
+  gap: 0.6rem;
+  align-items: baseline;
+  font-size: 1.4rem;
+  margin: 0.25rem 0;
+}
+
+.product-view__description {
+  margin-top: 0.5rem;
+  line-height: 1.6;
+}
+
+.product-view__seo {
+  margin-top: v.$space-6;
+  @include m.card-surface;
+  padding: v.$space-5;
+
+  h3 {
+    margin: 0 0 v.$space-4;
+  }
+}

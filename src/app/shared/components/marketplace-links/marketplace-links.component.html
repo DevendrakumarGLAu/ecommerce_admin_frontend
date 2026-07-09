@@ -1,0 +1,54 @@
+<div class="marketplace-links">
+  @if (links().length) {
+    <ul class="marketplace-links__list">
+      @for (link of links(); track link.id) {
+        <li class="marketplace-links__item">
+          <span class="marketplace-links__badge">{{ labelFor(link) }}</span>
+          <a [href]="link.url" target="_blank" rel="noopener" class="marketplace-links__url u-truncate">
+            {{ link.url }}
+          </a>
+          <button
+            mat-icon-button
+            type="button"
+            aria-label="Remove link"
+            (click)="removeLink(link)"
+          >
+            <mat-icon>close</mat-icon>
+          </button>
+        </li>
+      }
+    </ul>
+  }
+
+  <form [formGroup]="addForm" (ngSubmit)="addLink()" class="marketplace-links__form" novalidate>
+    <mat-form-field appearance="outline" class="marketplace-links__platform">
+      <mat-label>Platform</mat-label>
+      <mat-select formControlName="platform">
+        @for (platform of platforms; track platform) {
+          <mat-option [value]="platform">{{ platformLabels[platform] }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    @if (isOtherPlatform()) {
+      <mat-form-field appearance="outline" class="marketplace-links__label">
+        <mat-label>Platform name</mat-label>
+        <input matInput formControlName="customLabel" placeholder="e.g. Official Website" />
+      </mat-form-field>
+    }
+
+    <mat-form-field appearance="outline" class="marketplace-links__link">
+      <mat-label>Link</mat-label>
+      <input matInput formControlName="url" placeholder="https://…" />
+    </mat-form-field>
+
+    <button mat-stroked-button type="submit" color="primary" class="marketplace-links__add">
+      <mat-icon>add</mat-icon>
+      Add link
+    </button>
+  </form>
+  <app-form-error [control]="addForm.controls.url" label="Link" />
+  @if (isOtherPlatform()) {
+    <app-form-error [control]="addForm.controls.customLabel" label="Platform name" />
+  }
+</div>

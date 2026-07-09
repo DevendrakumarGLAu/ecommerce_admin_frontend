@@ -1,0 +1,30 @@
+<aside class="app-sidebar">
+  <div class="sidebar-brand">
+    <a routerLink="/dashboard" class="brand-link">
+      <span class="brand-initials">FB</span>
+      <span class="brand-text">{{ appName }}</span>
+    </a>
+  </div>
+
+  <div class="sidebar-wrapper">
+    <nav class="sidebar-menu">
+      <ul class="nav-list">
+        @for (item of navItems(); track item.route) {
+          <li class="nav-item">
+            <a
+              class="nav-link"
+              [routerLink]="item.route"
+              routerLinkActive="active"
+              (click)="closeMobileDrawer()"
+            >
+              <mat-icon class="nav-icon">{{ item.icon }}</mat-icon>
+              <p>{{ item.label }}</p>
+            </a>
+          </li>
+        }
+      </ul>
+    </nav>
+  </div>
+</aside>
+
+<div class="sidebar-overlay" (click)="closeMobileDrawer()"></div>

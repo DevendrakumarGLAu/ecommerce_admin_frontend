@@ -1,0 +1,83 @@
+@use '../../../../styles/variables' as v;
+
+:host {
+  display: contents;
+}
+
+.sidebar-brand {
+  display: flex;
+  align-items: center;
+  height: v.$topbar-height;
+  padding: 0 0.75rem;
+  border-bottom: 1px solid var(--mat-sys-outline-variant);
+}
+
+.brand-link {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  color: var(--mat-sys-on-surface);
+  overflow: hidden;
+  width: 100%;
+}
+
+.brand-initials {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: var(--mat-sys-primary);
+  color: var(--mat-sys-on-primary);
+  font-weight: 700;
+  font-size: 0.8rem;
+  flex-shrink: 0;
+}
+
+.brand-text {
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+:host-context(body.sidebar-collapse) .brand-initials {
+  display: flex;
+}
+
+.nav-list {
+  list-style: none;
+  margin: 0;
+  padding: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.55rem 0.75rem;
+  border-radius: v.$radius-sm;
+  color: var(--mat-sys-on-surface-variant);
+  transition: background-color v.$transition-fast, color v.$transition-fast;
+
+  &:hover {
+    background: var(--mat-sys-surface-container);
+    color: var(--mat-sys-on-surface);
+    text-decoration: none;
+  }
+
+  p {
+    margin: 0;
+    white-space: nowrap;
+  }
+}
+
+.nav-icon {
+  flex-shrink: 0;
+}
+
+.sidebar-overlay {
+  display: none;
+}

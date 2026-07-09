@@ -1,0 +1,62 @@
+<div class="page-container">
+  <app-page-toolbar title="Users" subtitle="Manage customer and admin accounts." />
+
+  <div class="user-filters">
+    <app-search-box placeholder="Search by name or email…" (search)="onSearch($event)" />
+
+    <mat-form-field appearance="outline" class="user-filters__field">
+      <mat-label>Role</mat-label>
+      <mat-select (selectionChange)="onRoleFilter($event.value)">
+        <mat-option [value]="null">All roles</mat-option>
+        @for (role of roleOptions; track role) {
+          <mat-option [value]="role">{{ role }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="user-filters__field">
+      <mat-label>Status</mat-label>
+      <mat-select (selectionChange)="onActiveFilter($event.value)">
+        <mat-option [value]="null">All statuses</mat-option>
+        <mat-option [value]="true">Active</mat-option>
+        <mat-option [value]="false">Inactive</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <app-data-table
+    [columns]="columns"
+    [data]="items()"
+    [total]="total()"
+    [pageIndex]="(pagination().page ?? 1) - 1"
+    [pageSize]="pagination().limit ?? 20"
+    [loading]="loading()"
+    emptyTitle="No users found"
+    exportFilename="users"
+    (sortChange)="onSortChange($event)"
+    (pageChange)="onPageChange($event)"
+    (rowClick)="viewUser($event)"
+  >
+    <ng-template appDataTableCell="role" let-row>
+      <span class="chip">{{ row.role }}</span>
+    </ng-template>
+
+    <ng-template appDataTableCell="status" let-row>
+      <span class="chip" [class]="row.is_active ? 'chip--published' : 'chip--archived'">
+        {{ row.is_active ? 'Active' : 'Inactive' }}
+      </span>
+    </ng-template>
+
+    <ng-template appDataTableCell="actions" let-row>
+      <button
+        mat-stroked-button
+        type="button"
+        [color]="row.is_active ? 'warn' : 'primary'"
+        [disabled]="isSelf(row)"
+        (click)="$event.stopPropagation(); toggleActive(row)"
+      >
+        {{ row.is_active ? 'Deactivate' : 'Activate' }}
+      </button>
+    </ng-template>
+  </app-data-table>
+</div>

@@ -1,0 +1,106 @@
+<div class="page-container">
+  <app-page-toolbar title="Settings" subtitle="Configure your store's branding, contact info, and integrations.">
+    <button toolbarActions mat-flat-button color="primary" type="button" [disabled]="submitting()" (click)="submit()">
+      @if (submitting()) {
+        <mat-progress-spinner mode="indeterminate" diameter="20" />
+      } @else {
+        Save changes
+      }
+    </button>
+  </app-page-toolbar>
+
+  @if (loading()) {
+    <p class="u-muted">Loading settings…</p>
+  } @else {
+    <form [formGroup]="form" class="settings-form" novalidate>
+      <mat-tab-group>
+        <mat-tab label="General">
+          <div class="settings-form__section">
+            <mat-form-field appearance="outline" class="u-full-width">
+              <mat-label>Website name</mat-label>
+              <input matInput formControlName="site_name" />
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="u-full-width">
+              <mat-label>Support email</mat-label>
+              <input matInput type="email" formControlName="support_email" />
+            </mat-form-field>
+            <app-form-error [control]="form.controls.support_email" label="Support email" />
+
+            <mat-form-field appearance="outline" class="u-full-width">
+              <mat-label>Support phone</mat-label>
+              <input matInput formControlName="support_phone" />
+            </mat-form-field>
+          </div>
+        </mat-tab>
+
+        <mat-tab label="Branding">
+          <div class="settings-form__section settings-form__branding">
+            <div>
+              <label class="settings-form__label">Logo</label>
+              <app-image-upload
+                [multiple]="false"
+                folder="settings"
+                label="Upload logo"
+                [images]="logo()"
+                (imagesChange)="logo.set($event)"
+              />
+            </div>
+            <div>
+              <label class="settings-form__label">Favicon</label>
+              <app-image-upload
+                [multiple]="false"
+                folder="settings"
+                label="Upload favicon"
+                [images]="favicon()"
+                (imagesChange)="favicon.set($event)"
+              />
+            </div>
+          </div>
+        </mat-tab>
+
+        <mat-tab label="Social links">
+          <div class="settings-form__section">
+            <mat-form-field appearance="outline" class="u-full-width">
+              <mat-label>Facebook</mat-label>
+              <input matInput formControlName="facebook" placeholder="https://facebook.com/…" />
+            </mat-form-field>
+            <app-form-error [control]="form.controls.facebook" label="Facebook URL" />
+
+            <mat-form-field appearance="outline" class="u-full-width">
+              <mat-label>Instagram</mat-label>
+              <input matInput formControlName="instagram" placeholder="https://instagram.com/…" />
+            </mat-form-field>
+            <app-form-error [control]="form.controls.instagram" label="Instagram URL" />
+
+            <mat-form-field appearance="outline" class="u-full-width">
+              <mat-label>YouTube</mat-label>
+              <input matInput formControlName="youtube" placeholder="https://youtube.com/…" />
+            </mat-form-field>
+            <app-form-error [control]="form.controls.youtube" label="YouTube URL" />
+
+            <mat-form-field appearance="outline" class="u-full-width">
+              <mat-label>Twitter / X</mat-label>
+              <input matInput formControlName="twitter" placeholder="https://x.com/…" />
+            </mat-form-field>
+            <app-form-error [control]="form.controls.twitter" label="Twitter URL" />
+          </div>
+        </mat-tab>
+
+        <mat-tab label="Analytics">
+          <div class="settings-form__section">
+            <mat-form-field appearance="outline" class="u-full-width">
+              <mat-label>Google Analytics ID</mat-label>
+              <input matInput formControlName="google_analytics" placeholder="G-XXXXXXXXXX" />
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="u-full-width">
+              <mat-label>Facebook Pixel ID</mat-label>
+              <input matInput formControlName="facebook_pixel" />
+            </mat-form-field>
+          </div>
+        </mat-tab>
+      </mat-tab-group>
+    </form>
+  }
+</div>

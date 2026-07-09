@@ -1,0 +1,100 @@
+<div class="data-table">
+  <div class="data-table__toolbar">
+    @if (selectable() && selection.selected.length) {
+      <div class="data-table__bulk-bar">
+        <span>{{ selection.selected.length }} selected</span>
+        @for (action of bulkActions(); track action.label) {
+          <button mat-stroked-button type="button" [color]="action.color ?? 'primary'" (click)="runBulkAction(action)">
+            @if (action.icon) {
+              <mat-icon>{{ action.icon }}</mat-icon>
+            }
+            {{ action.label }}
+          </button>
+        }
+      </div>
+    }
+
+    <div class="data-table__toolbar-actions">
+      <button mat-icon-button type="button" matTooltip="Export CSV" (click)="exportCsv()">
+        <mat-icon>download</mat-icon>
+      </button>
+      <button mat-icon-button type="button" matTooltip="Toggle columns" [matMenuTriggerFor]="columnMenu">
+        <mat-icon>view_column</mat-icon>
+      </button>
+      <mat-menu #columnMenu="matMenu">
+        <div class="data-table__column-menu" (click)="$event.stopPropagation()">
+          @for (col of columns(); track col.key) {
+            @if (col.hideable !== false) {
+              <mat-checkbox [checked]="isColumnVisible(col.key)" (change)="toggleColumn(col.key, $event.checked)">
+                {{ col.label }}
+              </mat-checkbox>
+            }
+          }
+        </div>
+      </mat-menu>
+    </div>
+  </div>
+
+  @if (loading()) {
+    <app-table-skeleton [columns]="displayedColumnKeys().length" />
+  } @else if (!data().length) {
+    <app-empty-state [title]="emptyTitle()" [description]="emptyDescription()" icon="inbox" />
+  } @else {
+    <div class="data-table__scroll">
+      <table mat-table [dataSource]="data()" matSort (matSortChange)="onSortChange($event)">
+        @if (selectable()) {
+          <ng-container matColumnDef="select" sticky>
+            <th mat-header-cell *matHeaderCellDef>
+              <mat-checkbox
+                [checked]="isAllSelected()"
+                [indeterminate]="isIndeterminate()"
+                (change)="toggleAll()"
+                aria-label="Select all rows"
+              />
+            </th>
+            <td mat-cell *matCellDef="let row">
+              <mat-checkbox
+                [checked]="selection.isSelected(row)"
+                (click)="$event.stopPropagation()"
+                (change)="selection.toggle(row)"
+                aria-label="Select row"
+              />
+            </td>
+          </ng-container>
+        }
+
+        @for (column of visibleColumns(); track column.key) {
+          <ng-container [matColumnDef]="column.key">
+            <th mat-header-cell *matHeaderCellDef [mat-sort-header]="column.key" [disabled]="!column.sortable">
+              {{ column.label }}
+            </th>
+            <td mat-cell *matCellDef="let row" [style.text-align]="column.align ?? 'left'">
+              @if (templateFor(column.key); as tpl) {
+                <ng-container *ngTemplateOutlet="tpl.templateRef; context: { $implicit: row }" />
+              } @else {
+                {{ cellValue(row, column) }}
+              }
+            </td>
+          </ng-container>
+        }
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumnKeys(); sticky: true"></tr>
+        <tr
+          mat-row
+          *matRowDef="let row; columns: displayedColumnKeys()"
+          class="data-table__row"
+          (click)="rowClick.emit(row)"
+        ></tr>
+      </table>
+    </div>
+
+    <mat-paginator
+      [length]="total()"
+      [pageSize]="pageSize()"
+      [pageIndex]="pageIndex()"
+      [pageSizeOptions]="pageSizeOptions()"
+      showFirstLastButtons
+      (page)="onPageChange($event)"
+    />
+  }
+</div>
