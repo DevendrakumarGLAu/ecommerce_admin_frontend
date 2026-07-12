@@ -16,6 +16,12 @@
   }
 }
 
+.status-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
 .product-thumb {
   width: 40px;
   height: 40px;

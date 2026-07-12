@@ -4,6 +4,7 @@ export interface Category {
   slug: string;
   image: string | null;
   description: string | null;
+  is_active: boolean;
   seo_title: string | null;
   meta_description: string | null;
   meta_keywords: string | null;
@@ -15,6 +16,7 @@ export interface CategoryCreateRequest {
   name: string;
   image?: string | null;
   description?: string | null;
+  is_active?: boolean;
   seo_title?: string | null;
   meta_description?: string | null;
   meta_keywords?: string | null;

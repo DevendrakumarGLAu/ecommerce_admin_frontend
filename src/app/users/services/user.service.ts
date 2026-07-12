@@ -3,7 +3,7 @@ import { Observable } from 'rxjs';
 
 import { ApiService } from '../../core/services/api.service';
 import { PaginatedResult, PaginationQuery } from '../../core/models/api-response.model';
-import { User, UserFilters } from '../models/user.model';
+import { User, UserFilters, UserRole } from '../models/user.model';
 
 @Injectable({ providedIn: 'root' })
 export class UserService {
@@ -23,5 +23,10 @@ export class UserService {
 
   deactivate(id: string): Observable<User> {
     return this.api.patch<User>(`/users/${id}/deactivate`, {});
+  }
+
+  /** Super-admin-only: promote/demote another user's role. */
+  updateRole(id: string, role: UserRole): Observable<User> {
+    return this.api.patch<User>(`/users/${id}/role`, { role });
   }
 }

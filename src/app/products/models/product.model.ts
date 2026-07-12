@@ -51,6 +51,8 @@ export interface ProductSummary {
   stock_status: StockStatus;
   status: ProductStatus;
   og_image: string | null;
+  created_by: string | null;
+  creator_name: string | null;
   created_at: string;
 }
 

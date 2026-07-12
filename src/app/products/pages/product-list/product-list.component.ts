@@ -5,6 +5,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSelectModule } from '@angular/material/select';
+import { MatSlideToggleChange, MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { PageEvent } from '@angular/material/paginator';
 import { Sort } from '@angular/material/sort';
@@ -14,6 +15,7 @@ import { forkJoin } from 'rxjs';
 import { Category } from '../../../categories/models/category.model';
 import { CategoryService } from '../../../categories/services/category.service';
 import { PaginationQuery } from '../../../core/models/api-response.model';
+import { AuthService } from '../../../core/services/auth.service';
 import { NotificationService } from '../../../core/services/notification.service';
 import {
   DataTableBulkAction,
@@ -38,6 +40,7 @@ import { ProductService } from '../../services/product.service';
     MatIconModule,
     MatMenuModule,
     MatSelectModule,
+    MatSlideToggleModule,
     MatTooltipModule,
     PageToolbarComponent,
     SearchBoxComponent,
@@ -54,6 +57,7 @@ export class ProductListComponent {
   private readonly dialogService = inject(DialogService);
   private readonly notifications = inject(NotificationService);
   private readonly router = inject(Router);
+  protected readonly authService = inject(AuthService);
 
   readonly columns: DataTableColumn<ProductSummary>[] = [
     { key: 'thumbnail', label: '', hideable: false },
@@ -62,6 +66,7 @@ export class ProductListComponent {
     { key: 'price', label: 'Price', sortable: true, align: 'right', accessor: (row) => `₹${row.sale_price ?? row.price}` },
     { key: 'stock_status', label: 'Stock', accessor: (row) => row.stock_status },
     { key: 'status', label: 'Status', accessor: (row) => row.status },
+    { key: 'creator', label: 'Added by', hideable: true, accessor: (row) => row.creator_name ?? '—' },
     {
       key: 'flags',
       label: 'Flags',
@@ -112,7 +117,9 @@ export class ProductListComponent {
 
   loadProducts(): void {
     this.loading.set(true);
-    this.productService.list(this.pagination(), this.filters()).subscribe({
+    // Super admins manage the whole catalog; regular admins are scoped to their own products.
+    const mine = !this.authService.isSuperAdmin();
+    this.productService.list(this.pagination(), this.filters(), mine).subscribe({
       next: (result) => {
         this.items.set(result.items);
         this.total.set(result.total);
@@ -185,6 +192,24 @@ export class ProductListComponent {
         this.notifications.success(`Deleted ${rows.length} product(s)`);
         this.loadProducts();
       });
+    });
+  }
+
+  /**
+   * The status column doubles as a quick Published/Draft toggle. Archived
+   * products keep the toggle disabled — un-archiving is a deliberate action
+   * available from the row menu, not a casual flip.
+   */
+  onToggleStatus(product: ProductSummary, event: MatSlideToggleChange): void {
+    const nextStatus: ProductStatus = product.status === 'published' ? 'draft' : 'published';
+    this.productService.update(product.id, { status: nextStatus }).subscribe({
+      next: () => {
+        this.notifications.success(nextStatus === 'published' ? 'Product published' : 'Product moved to draft');
+        this.loadProducts();
+      },
+      error: () => {
+        event.source.checked = product.status === 'published';
+      }
     });
   }
 

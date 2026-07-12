@@ -9,8 +9,8 @@ import { Category, CategoryCreateRequest, CategoryUpdateRequest } from '../model
 export class CategoryService {
   private readonly api = inject(ApiService);
 
-  list(pagination: PaginationQuery, search?: string): Observable<PaginatedResult<Category>> {
-    return this.api.get<PaginatedResult<Category>>('/categories', { ...pagination, search });
+  list(pagination: PaginationQuery, search?: string, isActive?: boolean): Observable<PaginatedResult<Category>> {
+    return this.api.get<PaginatedResult<Category>>('/categories', { ...pagination, search, is_active: isActive });
   }
 
   /** Fetches every category (single large page) — used to populate select dropdowns. */

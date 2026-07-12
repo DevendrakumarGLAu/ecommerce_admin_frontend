@@ -6,7 +6,18 @@
     </a>
   </app-page-toolbar>
 
-  <app-search-box placeholder="Search categories…" (search)="onSearch($event)" />
+  <div class="category-filters">
+    <app-search-box placeholder="Search categories…" (search)="onSearch($event)" />
+
+    <mat-form-field appearance="outline" class="category-filters__field">
+      <mat-label>Status</mat-label>
+      <mat-select (selectionChange)="onActiveFilter($event.value)">
+        <mat-option [value]="null">All statuses</mat-option>
+        <mat-option [value]="true">Active</mat-option>
+        <mat-option [value]="false">Paused</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
 
   <app-data-table
     [columns]="columns"
@@ -24,6 +35,15 @@
   >
     <ng-template appDataTableCell="image" let-row>
       <img class="category-thumb" [src]="row.image ?? 'assets/placeholder-product.svg'" alt="" />
+    </ng-template>
+
+    <ng-template appDataTableCell="status" let-row>
+      <mat-slide-toggle
+        [checked]="row.is_active"
+        [matTooltip]="row.is_active ? 'Pause category' : 'Activate category'"
+        (click)="$event.stopPropagation()"
+        (change)="onToggleActive(row, $event)"
+      />
     </ng-template>
 
     <ng-template appDataTableCell="actions" let-row>

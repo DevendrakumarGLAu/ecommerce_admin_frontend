@@ -7,3 +7,14 @@
   object-fit: cover;
   display: block;
 }
+
+.category-filters {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: v.$space-3;
+}
+
+.category-filters__field {
+  width: 160px;
+}

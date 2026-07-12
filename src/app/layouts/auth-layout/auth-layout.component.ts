@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 
-/** Centered card shell for login/forgot-password/reset-password pages. */
+/** Centered card shell for login/signup/forgot-password pages. */
 @Component({
   selector: 'app-auth-layout',
   standalone: true,

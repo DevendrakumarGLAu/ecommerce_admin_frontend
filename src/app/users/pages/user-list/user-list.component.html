@@ -38,25 +38,33 @@
     (rowClick)="viewUser($event)"
   >
     <ng-template appDataTableCell="role" let-row>
-      <span class="chip">{{ row.role }}</span>
+      @if (authService.isSuperAdmin() && !isSelf(row)) {
+        <mat-form-field appearance="outline" class="role-select" (click)="$event.stopPropagation()">
+          <mat-select [value]="row.role" (selectionChange)="onChangeRole(row, $event.value)">
+            @for (role of assignableRoles; track role) {
+              <mat-option [value]="role">{{ role.replace('_', ' ') }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      } @else {
+        <span class="chip">{{ row.role }}</span>
+      }
     </ng-template>
 
     <ng-template appDataTableCell="status" let-row>
       <span class="chip" [class]="row.is_active ? 'chip--published' : 'chip--archived'">
-        {{ row.is_active ? 'Active' : 'Inactive' }}
+        {{ row.is_active ? 'Active' : 'Paused' }}
       </span>
     </ng-template>
 
     <ng-template appDataTableCell="actions" let-row>
-      <button
-        mat-stroked-button
-        type="button"
-        [color]="row.is_active ? 'warn' : 'primary'"
+      <mat-slide-toggle
+        [checked]="row.is_active"
         [disabled]="isSelf(row)"
-        (click)="$event.stopPropagation(); toggleActive(row)"
-      >
-        {{ row.is_active ? 'Deactivate' : 'Activate' }}
-      </button>
+        [matTooltip]="isSelf(row) ? 'You cannot pause your own account' : (row.is_active ? 'Pause account' : 'Activate account')"
+        (click)="$event.stopPropagation()"
+        (change)="onToggleActive(row, $event)"
+      />
     </ng-template>
   </app-data-table>
 </div>

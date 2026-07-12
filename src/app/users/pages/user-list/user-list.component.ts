@@ -3,6 +3,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
+import { MatSlideToggleChange, MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { PageEvent } from '@angular/material/paginator';
 import { Sort } from '@angular/material/sort';
 import { Router } from '@angular/router';
@@ -26,6 +28,8 @@ import { UserService } from '../../services/user.service';
     MatFormFieldModule,
     MatIconModule,
     MatSelectModule,
+    MatSlideToggleModule,
+    MatTooltipModule,
     PageToolbarComponent,
     SearchBoxComponent,
     DataTableComponent,
@@ -37,12 +41,13 @@ import { UserService } from '../../services/user.service';
 })
 export class UserListComponent {
   private readonly userService = inject(UserService);
-  private readonly authService = inject(AuthService);
+  protected readonly authService = inject(AuthService);
   private readonly dialogService = inject(DialogService);
   private readonly notifications = inject(NotificationService);
   private readonly router = inject(Router);
 
-  readonly roleOptions: UserRole[] = ['admin', 'customer'];
+  readonly roleOptions: UserRole[] = ['super_admin', 'admin', 'customer'];
+  readonly assignableRoles: UserRole[] = ['super_admin', 'admin', 'customer'];
 
   readonly columns: DataTableColumn<User>[] = [
     { key: 'name', label: 'Name', sortable: true, accessor: (row) => `${row.first_name} ${row.last_name}` },
@@ -114,18 +119,25 @@ export class UserListComponent {
     return this.authService.currentUser()?.id === user.id;
   }
 
-  toggleActive(user: User): void {
+  /**
+   * The slide toggle flips its own visual state on click before we get a
+   * chance to confirm, so on cancel we must flip `event.source` back to
+   * match the un-changed `user.is_active` — otherwise the switch shows the
+   * wrong state until the next reload.
+   */
+  onToggleActive(user: User, event: MatSlideToggleChange): void {
     if (this.isSelf(user)) {
-      this.notifications.warning('You cannot deactivate your own account.');
+      event.source.checked = user.is_active;
+      this.notifications.warning('You cannot pause your own account.');
       return;
     }
 
     const action$ = user.is_active ? this.userService.deactivate(user.id) : this.userService.activate(user.id);
     const confirm$ = user.is_active
       ? this.dialogService.confirm({
-          title: `Deactivate ${user.first_name} ${user.last_name}?`,
+          title: `Pause ${user.first_name} ${user.last_name}?`,
           message: 'They will no longer be able to sign in until reactivated.',
-          confirmLabel: 'Deactivate',
+          confirmLabel: 'Pause',
           tone: 'danger'
         })
       : this.dialogService.confirm({
@@ -136,12 +148,47 @@ export class UserListComponent {
 
     confirm$.subscribe((confirmed) => {
       if (!confirmed) {
+        event.source.checked = user.is_active;
         return;
       }
-      action$.subscribe(() => {
-        this.notifications.success(user.is_active ? 'User deactivated' : 'User activated');
-        this.loadUsers();
+      action$.subscribe({
+        next: () => {
+          this.notifications.success(user.is_active ? 'User paused' : 'User activated');
+          this.loadUsers();
+        },
+        error: () => {
+          event.source.checked = user.is_active;
+        }
       });
     });
+  }
+
+  /** Super-admin-only. `isSelf` is already blocked from reaching this via the template. */
+  onChangeRole(user: User, newRole: UserRole): void {
+    if (newRole === user.role) {
+      return;
+    }
+
+    this.dialogService
+      .confirm({
+        title: `Change ${user.first_name} ${user.last_name}'s role to ${newRole.replace('_', ' ')}?`,
+        message:
+          newRole === 'super_admin'
+            ? 'They will be able to see and manage every product, and change other users’ roles.'
+            : 'This changes what they can see and manage across the admin panel.',
+        confirmLabel: 'Change role'
+      })
+      .subscribe((confirmed) => {
+        if (!confirmed) {
+          return;
+        }
+        this.userService.updateRole(user.id, newRole).subscribe({
+          next: () => {
+            this.notifications.success('Role updated');
+            this.loadUsers();
+          },
+          error: () => void 0
+        });
+      });
   }
 }

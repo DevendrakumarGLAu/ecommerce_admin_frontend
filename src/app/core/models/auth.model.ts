@@ -1,4 +1,4 @@
-export type UserRole = 'admin' | 'customer';
+export type UserRole = 'super_admin' | 'admin' | 'customer';
 
 export interface User {
   id: string;
@@ -23,6 +23,15 @@ export interface ProfileUpdateRequest {
 export interface LoginRequest {
   email: string;
   password: string;
+  captcha_id: string;
+  captcha_text: string;
+}
+
+export interface CaptchaResponse {
+  captcha_id: string;
+  /** Raw SVG markup — render via an <img src="data:image/svg+xml..."> to avoid HTML sanitization concerns. */
+  svg: string;
+  expires_in_minutes: number;
 }
 
 export interface RegisterRequest {
@@ -49,6 +58,33 @@ export interface LogoutRequest {
 
 export interface ChangePasswordRequest {
   current_password: string;
+  new_password: string;
+}
+
+export interface ForgotPasswordRequest {
+  email: string;
+}
+
+export interface ForgotPasswordResponse {
+  message: string;
+  expires_in_minutes: number;
+  /** Only present when the backend's OTP_DEBUG_MODE is on — never rely on this in production. */
+  otp: string | null;
+}
+
+export interface VerifyOtpRequest {
+  email: string;
+  otp: string;
+}
+
+export interface VerifyOtpResponse {
+  reset_token: string;
+  expires_in_minutes: number;
+}
+
+export interface ResetPasswordWithOtpRequest {
+  email: string;
+  reset_token: string;
   new_password: string;
 }
 

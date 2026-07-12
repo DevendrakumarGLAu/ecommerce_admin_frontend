@@ -2,11 +2,15 @@ import { Injectable, computed, inject, signal } from '@angular/core';
 import { Observable, tap } from 'rxjs';
 
 import {
+  CaptchaResponse,
   ChangePasswordRequest,
+  ForgotPasswordResponse,
   LoginRequest,
   ProfileUpdateRequest,
+  RegisterRequest,
   TokenResponse,
-  User
+  User,
+  VerifyOtpResponse
 } from '../models/auth.model';
 import { ApiService } from './api.service';
 import { TokenService } from './token.service';
@@ -25,10 +29,26 @@ export class AuthService {
 
   readonly currentUser = this.currentUserSignal.asReadonly();
   readonly isAuthenticated = computed(() => !!this.tokenService.accessToken());
-  readonly isAdmin = computed(() => this.currentUserSignal()?.role === 'admin');
+  readonly isSuperAdmin = computed(() => this.currentUserSignal()?.role === 'super_admin');
+  readonly isAdmin = computed(() => {
+    const role = this.currentUserSignal()?.role;
+    return role === 'admin' || role === 'super_admin';
+  });
+
+  /** A fresh captcha challenge — call this once on page load and again after any failed login. */
+  getCaptcha(): Observable<CaptchaResponse> {
+    return this.api.get<CaptchaResponse>('/auth/captcha');
+  }
 
   login(payload: LoginRequest): Observable<TokenResponse> {
     return this.api.post<TokenResponse>('/auth/login', payload).pipe(
+      tap((tokens) => this.tokenService.setTokens(tokens.access_token, tokens.refresh_token))
+    );
+  }
+
+  /** Admin-only signup — creates an admin-role account and logs it in immediately. */
+  registerAdmin(payload: RegisterRequest): Observable<TokenResponse> {
+    return this.api.post<TokenResponse>('/auth/register-admin', payload).pipe(
       tap((tokens) => this.tokenService.setTokens(tokens.access_token, tokens.refresh_token))
     );
   }
@@ -45,20 +65,23 @@ export class AuthService {
     return this.api.patch<User>('/auth/me', payload).pipe(tap((user) => this.currentUserSignal.set(user)));
   }
 
-  /**
-   * Requests a password-reset email.
-   *
-   * NOTE: the FastAPI backend does not yet implement `POST /auth/forgot-password`
-   * or `POST /auth/reset-password` — only register/login/refresh/logout/me/change-password
-   * exist today. This call is wired up per the UI spec and will 404 until those
-   * two endpoints are added to the backend.
-   */
-  forgotPassword(email: string): Observable<void> {
-    return this.api.post<void>('/auth/forgot-password', { email });
+  /** Step 1 of the OTP forgot-password flow — emails a 6-digit code (Gmail SMTP on the backend). */
+  forgotPassword(email: string): Observable<ForgotPasswordResponse> {
+    return this.api.post<ForgotPasswordResponse>('/auth/forgot-password', { email });
   }
 
-  resetPassword(token: string, newPassword: string): Observable<void> {
-    return this.api.post<void>('/auth/reset-password', { token, new_password: newPassword });
+  /** Step 2 — verifies the OTP and returns a short-lived `reset_token` for step 3. */
+  verifyOtp(email: string, otp: string): Observable<VerifyOtpResponse> {
+    return this.api.post<VerifyOtpResponse>('/auth/verify-otp', { email, otp });
+  }
+
+  /** Step 3 — sets the new password using the `reset_token` from `verifyOtp`. */
+  resetPasswordWithOtp(email: string, resetToken: string, newPassword: string): Observable<void> {
+    return this.api.post<void>('/auth/reset-password', {
+      email,
+      reset_token: resetToken,
+      new_password: newPassword
+    });
   }
 
   logout(): void {

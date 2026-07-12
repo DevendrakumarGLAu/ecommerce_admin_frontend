@@ -10,3 +10,11 @@
 .user-filters__field {
   width: 160px;
 }
+
+.role-select {
+  width: 140px;
+
+  ::ng-deep .mat-mdc-text-field-wrapper {
+    height: 40px;
+  }
+}

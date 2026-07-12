@@ -4,6 +4,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTabsModule } from '@angular/material/tabs';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
@@ -25,6 +26,7 @@ import { CategoryService } from '../../services/category.service';
     MatFormFieldModule,
     MatInputModule,
     MatProgressSpinnerModule,
+    MatSlideToggleModule,
     MatTabsModule,
     FormErrorComponent,
     ImageUploadComponent,
@@ -53,6 +55,7 @@ export class CategoryFormComponent {
   readonly form = this.fb.group({
     name: ['', [Validators.required, Validators.maxLength(150)]],
     description: [''],
+    is_active: [true],
     seo_title: [''],
     meta_description: [''],
     meta_keywords: ['']
@@ -75,6 +78,7 @@ export class CategoryFormComponent {
         this.form.patchValue({
           name: category.name,
           description: category.description,
+          is_active: category.is_active,
           seo_title: category.seo_title,
           meta_description: category.meta_description,
           meta_keywords: category.meta_keywords
@@ -97,6 +101,7 @@ export class CategoryFormComponent {
     const payload: CategoryCreateRequest = {
       name: raw.name!,
       description: raw.description || null,
+      is_active: raw.is_active ?? true,
       image: this.image().at(0)?.url ?? null,
       seo_title: raw.seo_title || null,
       meta_description: raw.meta_description || null,

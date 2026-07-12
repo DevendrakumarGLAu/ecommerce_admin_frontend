@@ -19,3 +19,11 @@
   color: var(--mat-sys-on-surface-variant);
   margin: 0.5rem 0 0.25rem;
 }
+
+.category-form__toggle {
+  display: flex;
+  align-items: center;
+  gap: v.$space-3;
+  font-size: 0.85rem;
+  margin: 0.25rem 0 0.5rem;
+}

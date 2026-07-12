@@ -21,8 +21,17 @@ import {
 export class ProductService {
   private readonly api = inject(ApiService);
 
-  list(pagination: PaginationQuery, filters: ProductFilters = {}): Observable<PaginatedResult<ProductSummary>> {
-    return this.api.get<PaginatedResult<ProductSummary>>('/products', { ...pagination, ...filters });
+  /**
+   * `mine` (default true) scopes results to products the calling admin created —
+   * each admin only manages their own catalog. Legacy products with no owner yet
+   * are included for everyone until an admin edits (and thereby claims) them.
+   */
+  list(
+    pagination: PaginationQuery,
+    filters: ProductFilters = {},
+    mine = true
+  ): Observable<PaginatedResult<ProductSummary>> {
+    return this.api.get<PaginatedResult<ProductSummary>>('/products', { ...pagination, ...filters, mine });
   }
 
   getBySlug(slug: string): Observable<Product> {

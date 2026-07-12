@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -6,8 +6,10 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
+import { CaptchaResponse } from '../../../core/models/auth.model';
 import { FormErrorComponent } from '../../../shared/components/form-error/form-error.component';
 import { AuthService } from '../../../core/services/auth.service';
 import { NotificationService } from '../../../core/services/notification.service';
@@ -24,6 +26,7 @@ import { NotificationService } from '../../../core/services/notification.service
     MatIconModule,
     MatInputModule,
     MatProgressSpinnerModule,
+    MatTooltipModule,
     FormErrorComponent
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -39,21 +42,54 @@ export class LoginComponent {
 
   readonly submitting = signal(false);
   readonly hidePassword = signal(true);
+  readonly captchaLoading = signal(false);
+  readonly captcha = signal<CaptchaResponse | null>(null);
+
+  readonly captchaImageSrc = computed(() => {
+    const svg = this.captcha()?.svg;
+    return svg ? `data:image/svg+xml;utf8,${encodeURIComponent(svg)}` : null;
+  });
 
   readonly form = this.fb.nonNullable.group({
     email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required]]
+    password: ['', [Validators.required]],
+    captchaText: ['', [Validators.required]]
   });
 
+  constructor() {
+    this.refreshCaptcha();
+  }
+
+  /** Every login attempt consumes its challenge (right or wrong), so a fresh one is
+   * needed on load and again after any failed attempt. */
+  refreshCaptcha(): void {
+    this.captchaLoading.set(true);
+    this.form.controls.captchaText.reset('');
+    this.authService.getCaptcha().subscribe({
+      next: (result) => {
+        this.captcha.set(result);
+        this.captchaLoading.set(false);
+      },
+      error: () => this.captchaLoading.set(false)
+    });
+  }
+
   submit(): void {
-    if (this.form.invalid) {
+    if (this.form.invalid || !this.captcha()) {
       this.form.markAllAsTouched();
       return;
     }
 
+    const { email, password, captchaText } = this.form.getRawValue();
+
     this.submitting.set(true);
     this.authService
-      .login(this.form.getRawValue())
+      .login({
+        email,
+        password,
+        captcha_id: this.captcha()!.captcha_id,
+        captcha_text: captchaText
+      })
       .subscribe({
         next: () => {
           this.authService.loadCurrentUser().subscribe({
@@ -66,7 +102,11 @@ export class LoginComponent {
             error: () => this.submitting.set(false)
           });
         },
-        error: () => this.submitting.set(false)
+        error: () => {
+          this.submitting.set(false);
+          // The captcha challenge was consumed by this attempt (right or wrong) — get a new one.
+          this.refreshCaptcha();
+        }
       });
   }
 }

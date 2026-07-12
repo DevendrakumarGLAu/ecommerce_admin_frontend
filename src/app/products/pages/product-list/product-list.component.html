@@ -71,7 +71,21 @@
     </ng-template>
 
     <ng-template appDataTableCell="status" let-row>
-      <span class="chip" [class]="'chip--' + row.status">{{ row.status }}</span>
+      @if (row.status === 'archived') {
+        <span class="chip chip--archived" matTooltip="Un-archive from the row menu to publish or draft it again">
+          archived
+        </span>
+      } @else {
+        <div class="status-toggle">
+          <mat-slide-toggle
+            [checked]="row.status === 'published'"
+            [matTooltip]="row.status === 'published' ? 'Move to draft' : 'Publish'"
+            (click)="$event.stopPropagation()"
+            (change)="onToggleStatus(row, $event)"
+          />
+          <span class="chip" [class]="'chip--' + row.status">{{ row.status }}</span>
+        </div>
+      }
     </ng-template>
 
     <ng-template appDataTableCell="flags" let-row>

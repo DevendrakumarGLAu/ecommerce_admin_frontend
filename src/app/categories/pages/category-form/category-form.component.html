@@ -31,6 +31,11 @@
               <textarea matInput rows="4" formControlName="description"></textarea>
             </mat-form-field>
 
+            <div class="category-form__toggle">
+              <mat-slide-toggle formControlName="is_active">Active</mat-slide-toggle>
+              <span class="u-muted">Paused categories are hidden from the storefront.</span>
+            </div>
+
             <label class="category-form__label">Category image</label>
             <app-image-upload
               [multiple]="false"

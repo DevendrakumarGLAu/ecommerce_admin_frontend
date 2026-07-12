@@ -11,7 +11,9 @@ const AUTH_EXEMPT_PATHS = [
   '/auth/login',
   '/auth/register',
   '/auth/refresh',
+  '/auth/captcha',
   '/auth/forgot-password',
+  '/auth/verify-otp',
   '/auth/reset-password'
 ];
 

@@ -42,9 +42,12 @@ export class SettingsComponent {
   readonly submitting = signal(false);
   readonly logo = signal<UploadedImage[]>([]);
   readonly favicon = signal<UploadedImage[]>([]);
+  readonly heroBanner = signal<UploadedImage[]>([]);
 
   readonly form = this.fb.group({
     site_name: ['', Validators.maxLength(150)],
+    hero_banner_title: ['', Validators.maxLength(200)],
+    hero_banner_subtitle: ['', Validators.maxLength(500)],
     support_email: ['', Validators.email],
     support_phone: [''],
     facebook: ['', urlValidator()],
@@ -69,6 +72,9 @@ export class SettingsComponent {
         if (settings.favicon) {
           this.favicon.set([{ id: crypto.randomUUID(), url: settings.favicon }]);
         }
+        if (settings.hero_banner_url) {
+          this.heroBanner.set([{ id: crypto.randomUUID(), url: settings.hero_banner_url }]);
+        }
         this.form.patchValue(settings);
         this.loading.set(false);
       },
@@ -88,7 +94,8 @@ export class SettingsComponent {
       .update({
         ...this.form.getRawValue(),
         logo: this.logo().at(0)?.url ?? null,
-        favicon: this.favicon().at(0)?.url ?? null
+        favicon: this.favicon().at(0)?.url ?? null,
+        hero_banner_url: this.heroBanner().at(0)?.url ?? null
       })
       .subscribe({
         next: () => {

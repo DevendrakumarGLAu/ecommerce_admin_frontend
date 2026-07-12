@@ -1,16 +1,15 @@
 <div class="page-container">
   <app-page-toolbar title="User details" [breadcrumbs]="[{ label: 'Users', link: '/users' }, { label: 'Details' }]">
     @if (user(); as u) {
-      <button
-        toolbarActions
-        mat-flat-button
-        [color]="u.is_active ? 'warn' : 'primary'"
-        type="button"
-        [disabled]="isSelf()"
-        (click)="toggleActive()"
-      >
-        {{ u.is_active ? 'Deactivate' : 'Activate' }}
-      </button>
+      <div toolbarActions class="user-detail__toggle-action">
+        <span class="u-muted">{{ u.is_active ? 'Active' : 'Paused' }}</span>
+        <mat-slide-toggle
+          [checked]="u.is_active"
+          [disabled]="isSelf()"
+          [matTooltip]="isSelf() ? 'You cannot pause your own account' : (u.is_active ? 'Pause account' : 'Activate account')"
+          (change)="onToggleActive($event)"
+        />
+      </div>
     }
   </app-page-toolbar>
 
@@ -26,7 +25,7 @@
         <h2>{{ u.first_name }} {{ u.last_name }}</h2>
         <span class="chip">{{ u.role }}</span>
         <span class="chip" [class]="u.is_active ? 'chip--published' : 'chip--archived'">
-          {{ u.is_active ? 'Active' : 'Inactive' }}
+          {{ u.is_active ? 'Active' : 'Paused' }}
         </span>
 
         <dl class="user-detail__fields">

@@ -31,6 +31,32 @@
   </mat-form-field>
   <app-form-error [control]="form.controls.password" label="Password" />
 
+  <div class="captcha-row">
+    <div class="captcha-image-wrap">
+      @if (captchaLoading()) {
+        <mat-progress-spinner mode="indeterminate" diameter="24" />
+      } @else if (captchaImageSrc()) {
+        <img [src]="captchaImageSrc()" alt="Captcha challenge — type the characters shown" class="captcha-image" />
+      }
+    </div>
+    <button
+      mat-icon-button
+      type="button"
+      matTooltip="Get a new captcha"
+      [disabled]="captchaLoading()"
+      (click)="refreshCaptcha()"
+    >
+      <mat-icon>refresh</mat-icon>
+    </button>
+  </div>
+
+  <mat-form-field appearance="outline" class="u-full-width">
+    <mat-label>Type the characters above</mat-label>
+    <input matInput formControlName="captchaText" autocomplete="off" required />
+    <mat-icon matPrefix>verified_user</mat-icon>
+  </mat-form-field>
+  <app-form-error [control]="form.controls.captchaText" label="Captcha" />
+
   <div class="auth-form__row">
     <a routerLink="/auth/forgot-password">Forgot password?</a>
   </div>
@@ -43,3 +69,7 @@
     }
   </button>
 </form>
+
+<p class="auth-form__footer">
+  Don't have an account? <a routerLink="/auth/signup">Sign up</a>
+</p>

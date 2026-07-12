@@ -155,10 +155,13 @@ a {
   color: var(--mat-sys-on-surface-variant);
 }
 
-// Angular CDK overlay containers (dialogs/menus) render outside the app root,
-// so they need the theme's typography applied explicitly.
+// Angular CDK overlay containers (dialogs/menus/snackbars) render outside the
+// app root, so they need the theme's typography applied explicitly. They also
+// need a z-index above AdminLTE's `.app-header` (z-index: 1034) — otherwise
+// the fixed header sits on top of toasts and other top-anchored overlays.
 .cdk-overlay-container {
   font-family: var(--mat-sys-body-medium-font, inherit);
+  z-index: 2000;
 }
 
 // Toast notification colors (NotificationService panelClass).

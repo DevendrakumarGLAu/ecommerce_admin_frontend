@@ -32,6 +32,13 @@
   }
 }
 
+.user-detail__toggle-action {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+}
+
 .user-detail__fields {
   display: grid;
   grid-template-columns: 140px 1fr;

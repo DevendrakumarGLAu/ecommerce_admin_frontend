@@ -1,5 +1,5 @@
 import { ApplicationConfig, ErrorHandler, inject, provideZoneChangeDetection, provideAppInitializer } from '@angular/core';
-import { provideRouter, withComponentInputBinding } from '@angular/router';
+import { provideRouter, withComponentInputBinding, withInMemoryScrolling } from '@angular/router';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { catchError, firstValueFrom, of } from 'rxjs';
@@ -15,7 +15,11 @@ import { TokenService } from './core/services/token.service';
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
-    provideRouter(routes, withComponentInputBinding()),
+    provideRouter(
+      routes,
+      withComponentInputBinding(),
+      withInMemoryScrolling({ scrollPositionRestoration: 'enabled', anchorScrolling: 'enabled' })
+    ),
     provideAnimationsAsync(),
     provideHttpClient(withInterceptors([authInterceptor, loadingInterceptor, errorInterceptor])),
     { provide: ErrorHandler, useClass: GlobalErrorHandler },

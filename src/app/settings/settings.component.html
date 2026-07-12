@@ -59,6 +59,35 @@
           </div>
         </mat-tab>
 
+        <mat-tab label="Homepage Hero">
+          <div class="settings-form__section">
+            <div>
+              <label class="settings-form__label">Hero banner image</label>
+              <app-image-upload
+                [multiple]="false"
+                folder="settings"
+                label="Upload hero banner"
+                [images]="heroBanner()"
+                (imagesChange)="heroBanner.set($event)"
+              />
+              <p class="u-muted settings-form__hint">
+                Shown on the buyer portal homepage hero. Recommended: 1920×1080px (16:9), or 1920×800px for a wide
+                banner. Leave empty to keep the default decorative hero.
+              </p>
+            </div>
+
+            <mat-form-field appearance="outline" class="u-full-width">
+              <mat-label>Hero title (optional)</mat-label>
+              <input matInput formControlName="hero_banner_title" placeholder="Where Tradition Meets Timeless Elegance" />
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="u-full-width">
+              <mat-label>Hero subtitle (optional)</mat-label>
+              <input matInput formControlName="hero_banner_subtitle" placeholder="Discover authentic handcrafted bangles…" />
+            </mat-form-field>
+          </div>
+        </mat-tab>
+
         <mat-tab label="Social links">
           <div class="settings-form__section">
             <mat-form-field appearance="outline" class="u-full-width">
